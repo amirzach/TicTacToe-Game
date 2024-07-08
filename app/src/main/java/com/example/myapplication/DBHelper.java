@@ -81,12 +81,12 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
-    public boolean checkUser(String username, String email) {
+    public boolean checkUser(String username, String password) {
         SQLiteDatabase db = null;
         Cursor cursor = null;
         try {
             db = this.getReadableDatabase();
-            cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME + " WHERE " + KEY_USERNAME + " = ? AND " + KEY_EMAIL + " = ?", new String[]{username, email});
+            cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME + " WHERE " + KEY_USERNAME + " = ? AND " + KEY_PASSWORD + " = ?", new String[]{username, password});
             return cursor.getCount() > 0;
         } catch (SQLException e) {
             e.printStackTrace();

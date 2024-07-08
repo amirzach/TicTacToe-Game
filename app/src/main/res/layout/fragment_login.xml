@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LoginActivity">
+    tools:context=".LoginFragment">
 
     <ImageView
         android:id="@+id/background_image"
@@ -32,6 +32,7 @@
         android:hint="Username"
         android:inputType="text"
         android:textColorHint="@color/white"
+        android:textColor="@color/white"
         android:padding="10dp" />
 
     <EditText
@@ -43,6 +44,7 @@
         android:hint="Password"
         android:inputType="textPassword"
         android:textColorHint="@color/white"
+        android:textColor="@color/white"
         android:padding="10dp" />
 
     <!-- Login Button -->
@@ -52,7 +54,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/editTextPassword"
         android:layout_marginTop="20dp"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
         android:text="Login" />
 
     <!-- Sign Up Button -->
@@ -62,7 +64,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/buttonLogin"
         android:layout_marginTop="10dp"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
         android:text="New user? Sign up here" />
 
 </RelativeLayout>
