@@ -14,7 +14,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 public class SignupFragment extends Fragment {
 
-    private EditText usernameEditText, emailEditText, passwordEditText;
+    private EditText usernameEditText, nicknameEditText, passwordEditText;
     private Button signUpButton;
     private DBHelper dbHelper;
     @Override
@@ -26,7 +26,7 @@ public class SignupFragment extends Fragment {
         dbHelper = new DBHelper(getActivity());
 
         usernameEditText = view.findViewById(R.id.editTextUsername);
-        emailEditText = view.findViewById(R.id.editTextEmail);
+        nicknameEditText = view.findViewById(R.id.editTextNickname);
         passwordEditText = view.findViewById(R.id.editTextPassword);
         signUpButton = view.findViewById(R.id.buttonSignUp);
 
@@ -34,7 +34,7 @@ public class SignupFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 String username = usernameEditText.getText().toString();
-                String email = emailEditText.getText().toString();
+                String nickname = nicknameEditText.getText().toString();
                 String password = passwordEditText.getText().toString();
 
                 // Validate input fields
@@ -43,8 +43,8 @@ public class SignupFragment extends Fragment {
                     return;
                 }
 
-                if (TextUtils.isEmpty(email)) {
-                    emailEditText.setError("Email is required");
+                if (TextUtils.isEmpty(nickname)) {
+                    nicknameEditText.setError("Nickname is required");
                     return;
                 }
 
@@ -57,7 +57,7 @@ public class SignupFragment extends Fragment {
                     // Username is already taken, show a toast message
                     Toast.makeText(getActivity(), "Username already exists. Please choose another one.", Toast.LENGTH_SHORT).show();
                 } else {
-                    if (dbHelper.addUser(username, email, password)) {
+                    if (dbHelper.addUser(username, nickname, password)) {
                         FragmentTransaction transaction = getFragmentManager().beginTransaction();
                         transaction.replace(R.id.fragment_container, new LoginFragment());
                         transaction.addToBackStack(null);

@@ -12,11 +12,11 @@ import androidx.annotation.Nullable;
 public class DBHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "TicTacToeDB";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     private static final String TABLE_NAME = "users";
     private static final String KEY_ID = "id";
     private static final String KEY_USERNAME = "username";
-    private static final String KEY_EMAIL = "email";
+    private static final String KEY_NICKNAME = "nickname";
     private static final String KEY_PASSWORD = "password";
 
     public DBHelper(@Nullable Context context) {
@@ -28,7 +28,7 @@ public class DBHelper extends SQLiteOpenHelper {
         String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + "("
                 + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + KEY_USERNAME + " TEXT, "
-                + KEY_EMAIL + " TEXT, "
+                + KEY_NICKNAME + " TEXT, "
                 + KEY_PASSWORD + " TEXT)";
         db.execSQL(CREATE_TABLE);
     }
@@ -39,13 +39,13 @@ public class DBHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public boolean addUser(String username, String email, String password) {
+    public boolean addUser(String username, String nickname, String password) {
         SQLiteDatabase db = null;
         try {
             db = this.getWritableDatabase();
             ContentValues values = new ContentValues();
             values.put(KEY_USERNAME, username);
-            values.put(KEY_EMAIL, email);
+            values.put(KEY_NICKNAME, nickname);
             values.put(KEY_PASSWORD, password);
 
             long result = db.insert(TABLE_NAME, null, values);
@@ -60,13 +60,13 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
-    public boolean updateUser(int id, String username, String email, String password) {
+    public boolean updateUser(int id, String username, String nickname, String password) {
         SQLiteDatabase db = null;
         try {
             db = this.getWritableDatabase();
             ContentValues values = new ContentValues();
             values.put(KEY_USERNAME, username);
-            values.put(KEY_EMAIL, email);
+            values.put(KEY_NICKNAME, nickname);
             values.put(KEY_PASSWORD, password);
 
             int result = db.update(TABLE_NAME, values, KEY_ID + " = ?", new String[]{String.valueOf(id)});
@@ -120,4 +120,5 @@ public class DBHelper extends SQLiteOpenHelper {
             }
         }
     }
+
 }

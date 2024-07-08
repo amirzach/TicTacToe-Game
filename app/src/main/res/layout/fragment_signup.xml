@@ -26,7 +26,7 @@
     <EditText
         android:id="@+id/editTextUsername"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:layout_below="@id/textViewTitle"
         android:layout_marginTop="20dp"
         android:hint="Username"
@@ -36,13 +36,13 @@
         android:padding="10dp" />
 
     <EditText
-        android:id="@+id/editTextEmail"
+        android:id="@+id/editTextNickname"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:layout_below="@id/editTextUsername"
         android:layout_marginTop="10dp"
-        android:hint="Email"
-        android:inputType="textEmailAddress"
+        android:hint="Nickname"
+        android:inputType="text"
         android:textColorHint="@color/white"
         android:textColor="@color/white"
         android:padding="10dp" />
@@ -50,8 +50,8 @@
     <EditText
         android:id="@+id/editTextPassword"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/editTextEmail"
+        android:layout_height="48dp"
+        android:layout_below="@id/editTextNickname"
         android:layout_marginTop="10dp"
         android:hint="Password"
         android:inputType="textPassword"
