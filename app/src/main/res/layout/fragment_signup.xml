@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SignUpActivity">
+    tools:context=".SignupActivity">
 
     <ImageView
         android:id="@+id/background_image"
@@ -32,6 +32,7 @@
         android:hint="Username"
         android:inputType="text"
         android:textColorHint="@color/white"
+        android:textColor="@color/white"
         android:padding="10dp" />
 
     <EditText
@@ -43,6 +44,7 @@
         android:hint="Email"
         android:inputType="textEmailAddress"
         android:textColorHint="@color/white"
+        android:textColor="@color/white"
         android:padding="10dp" />
 
     <EditText
@@ -54,6 +56,7 @@
         android:hint="Password"
         android:inputType="textPassword"
         android:textColorHint="@color/white"
+        android:textColor="@color/white"
         android:padding="10dp" />
 
     <Button
