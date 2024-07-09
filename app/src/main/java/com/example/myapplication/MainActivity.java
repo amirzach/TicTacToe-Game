@@ -15,6 +15,8 @@ import com.google.android.material.navigation.NavigationView;
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private DrawerLayout drawerLayout;
+    private MenuItem signUpMenuItem;
+    DBHelper DBHelper = new DBHelper(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,13 +40,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             navigationView.setCheckedItem(R.id.nav_home);
         }
 
-        DBHelper DBHelper = new DBHelper(this);
+        //Get the Sign Up menu item
+        signUpMenuItem = navigationView.getMenu().findItem(R.id.nav_Signup);
+
         // Check if host exists in the database
         if (!DBHelper.isHostExists()) {
             // No host exists
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SignupFragment()).commit();
             navigationView.setCheckedItem(R.id.nav_Signup);
         } else {
+            //Hide Sign Up menu item
+            signUpMenuItem.setVisible(false);
+
             // Host exists
             if (savedInstanceState == null) {
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
