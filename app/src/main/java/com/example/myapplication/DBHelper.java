@@ -45,7 +45,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public void onCreatePlayerTable(SQLiteDatabase db) {
         String CREATE_TABLE = "CREATE TABLE " + TABLE_PLAYER + "("
                 + KEY_PLAYER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + KEY_PLAYER_NICKNAME + " TEXT"
+                + KEY_PLAYER_NICKNAME + " TEXT UNIQUE,"
                 + KEY_PLAYER_POINTS + "TEXT)";
         db.execSQL(CREATE_TABLE);
     }
@@ -53,7 +53,9 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             db.execSQL("DROP TABLE IF EXISTS users" );
-            onCreateHostTable(db);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_HOST);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_PLAYER);
+            onCreate(db);
     }
 
     public boolean createHost(String username, String nickname, String password) {
