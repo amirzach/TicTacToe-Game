@@ -29,30 +29,28 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        onCreateHostTable(db);
-        onCreatePlayerTable(db);
+        onCreateTable(db);
     }
 
-    private void onCreateHostTable(SQLiteDatabase db) {
-        String CREATE_TABLE = "CREATE TABLE " + TABLE_HOST + "("
+    private void onCreateTable(SQLiteDatabase db) {
+
+        String CREATE_TABLE_HOST = "CREATE TABLE " + TABLE_HOST + "("
                 + KEY_HOST_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + KEY_HOST_USERNAME + " TEXT, "
                 + KEY_HOST_NICKNAME + " TEXT, "
                 + KEY_HOST_PASSWORD + " TEXT)";
-        db.execSQL(CREATE_TABLE);
-    }
 
-    public void onCreatePlayerTable(SQLiteDatabase db) {
-        String CREATE_TABLE = "CREATE TABLE " + TABLE_PLAYER + "("
+        String CREATE_TABLE_PLAYER = "CREATE TABLE " + TABLE_PLAYER + "("
                 + KEY_PLAYER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + KEY_PLAYER_NICKNAME + " TEXT UNIQUE,"
-                + KEY_PLAYER_POINTS + "TEXT)";
-        db.execSQL(CREATE_TABLE);
+                + KEY_PLAYER_POINTS + " TEXT)";
+
+        db.execSQL(CREATE_TABLE_HOST);
+        db.execSQL(CREATE_TABLE_PLAYER);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            db.execSQL("DROP TABLE IF EXISTS users" );
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_HOST);
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_PLAYER);
             onCreate(db);
