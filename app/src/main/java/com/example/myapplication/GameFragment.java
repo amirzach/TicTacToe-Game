@@ -115,7 +115,7 @@ public class GameFragment extends Fragment implements View.OnClickListener {
 
         playAgain.setOnClickListener(v -> playAgain());
 
-        if(isLoggedIn) {
+        if (isLoggedIn) {
             // Prompt user to choose X or O at the start
             showChooseSymbolDialog();
         }
@@ -145,7 +145,7 @@ public class GameFragment extends Fragment implements View.OnClickListener {
         if (checkWinner()) {
             if (isPlayerOneTurn) {
                 playerOneScoreCount++;
-                playerStatus.setText(playerOneChoosesX ? playerOneName + " has won this round" : playerTwoName + " has won this round");
+                playerStatus.setText(playerOneChoosesX ? playerOneName + " has won this round" : playerOneName + " has won this round");
             } else {
                 playerTwoScoreCount++;
                 playerStatus.setText(playerTwoName + " has won this round");
@@ -193,7 +193,6 @@ public class GameFragment extends Fragment implements View.OnClickListener {
     private void playAgain() {
         rounds = 0;
         isPlayerOneTurn = true;
-        playerOneChoosesX = true;
         playerStatus.setText(playerOneName + "'s Turn");
 
         for (int i = 0; i < 16; i++) {
@@ -268,7 +267,6 @@ public class GameFragment extends Fragment implements View.OnClickListener {
     }
 
     // Fetch player names from database
-// Fetch player names from database
     private void fetchPlayerNames() {
         // Query for Player-1 name from Host table
         Cursor cursorHost = db.query("Host", new String[]{"nickname"}, null, null, null, null, null);
@@ -300,7 +298,6 @@ public class GameFragment extends Fragment implements View.OnClickListener {
         playerOneNameTextView.setText(playerOneName);
         playerTwoNameTextView.setText(playerTwoName);
     }
-
 
     @Override
     public void onResume() {

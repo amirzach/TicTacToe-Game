@@ -18,7 +18,7 @@ import android.content.SharedPreferences;
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private DrawerLayout drawerLayout;
-    private MenuItem signUpMenuItem, signInMenuItem, logoutMenuItem;
+    private MenuItem signInMenuItem, logoutMenuItem;
     DBHelper DBHelper = new DBHelper(this);
 
     @Override
@@ -39,7 +39,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         toggle.syncState();
 
         //Get the Sign Up, Sign In and Logout menu item
-        signUpMenuItem = navigationView.getMenu().findItem(R.id.nav_Signup);
         signInMenuItem = navigationView.getMenu().findItem(R.id.nav_Signin);
         logoutMenuItem = navigationView.getMenu().findItem(R.id.nav_logout);
 
@@ -66,16 +65,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         // Check if host exists in the database
-        if (!DBHelper.isHostExists()) {
-            // No host exists
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SignupFragment()).commit();
-            navigationView.setCheckedItem(R.id.nav_Signup);
-
-            signUpMenuItem.setVisible(true);
-        } else {
-            //Hide Sign Up menu item
-            signUpMenuItem.setVisible(false);
-
+        if (DBHelper.isHostExists()) {
             // Host exists
             if (savedInstanceState == null) {
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
@@ -103,8 +93,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
         } else if (id == R.id.nav_Signin) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new LoginFragment()).commit();
-        }else if (id == R.id.nav_Signup) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SignupFragment()).commit();
         } else if (id == R.id.nav_Game) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new GameFragment()).commit();
         } else if (id == R.id.nav_Report) {
