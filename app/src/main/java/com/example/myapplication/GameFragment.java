@@ -1,12 +1,16 @@
 package com.example.myapplication;
 
 import android.app.AlertDialog;
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,7 +20,8 @@ import androidx.fragment.app.Fragment;
 
 public class GameFragment extends Fragment implements View.OnClickListener {
 
-    private TextView playerOneScore, playerTwoScore, playerStatus;
+    private SQLiteDatabase db;
+    private TextView playerOneScore, playerTwoScore, playerStatus, playerOneNameTextView, playerTwoNameTextView;
     private Button[] buttons = new Button[16];
     private Button reset, playAgain;
 
@@ -33,6 +38,9 @@ public class GameFragment extends Fragment implements View.OnClickListener {
     private int playerOneScoreCount = 0;
     private int playerTwoScoreCount = 0;
 
+    private String playerOneName = ""; // Store player one's name
+    private String playerTwoName = ""; // Store player two's name
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -43,11 +51,15 @@ public class GameFragment extends Fragment implements View.OnClickListener {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        db = new DBHelper(getContext()).getWritableDatabase();
+
         playerOneScore = view.findViewById(R.id.score_Player1);
         playerTwoScore = view.findViewById(R.id.score_Player2);
         playerStatus = view.findViewById(R.id.textStatus);
         reset = view.findViewById(R.id.btn_reset);
         playAgain = view.findViewById(R.id.btn_play_again);
+        playerOneNameTextView = view.findViewById(R.id.text_player1);
+        playerTwoNameTextView = view.findViewById(R.id.text_player2);
 
         // Initialize gameState for 16 buttons
         for (int i = 0; i < 16; i++) {
@@ -112,29 +124,31 @@ public class GameFragment extends Fragment implements View.OnClickListener {
         if (checkWinner()) {
             if (isPlayerOneTurn) {
                 playerOneScoreCount++;
-                playerStatus.setText("Player-1 has won this round");
+                playerStatus.setText(playerOneChoosesX ? playerOneName + " has won this round" : playerTwoName + " has won this round");
             } else {
                 playerTwoScoreCount++;
-                playerStatus.setText("Player-2 has won this round");
+                playerStatus.setText(playerTwoName + " has won this round");
             }
 
             if (playerOneScoreCount == 3) {
-                Toast.makeText(getActivity(), "Player-1 wins the game!", Toast.LENGTH_SHORT).show();
-                playerStatus.setText("Player-1 has won the game!");
+                Toast.makeText(getActivity(), playerOneName + " wins the game!", Toast.LENGTH_SHORT).show();
+                playerStatus.setText(playerOneName + " has won the game!");
+                updatePlayerScore();
                 resetGame();
             } else if (playerTwoScoreCount == 3) {
-                Toast.makeText(getActivity(), "Player-2 wins the game!", Toast.LENGTH_SHORT).show();
-                playerStatus.setText("Player-2 has won the game!");
+                Toast.makeText(getActivity(), playerTwoName + " wins the game!", Toast.LENGTH_SHORT).show();
+                playerStatus.setText(playerTwoName + " has won the game!");
+                updatePlayerScore();
                 resetGame();
+            } else {
+                updatePlayerScore();
             }
-
-            updatePlayerScore();
         } else if (rounds == 16) {
             playerStatus.setText("It's a draw!");
             playAgain();
         } else {
             isPlayerOneTurn = !isPlayerOneTurn;
-            playerStatus.setText(isPlayerOneTurn ? "Player-1's Turn" : "Player-2's Turn");
+            playerStatus.setText(isPlayerOneTurn ? playerOneName + "'s Turn" : playerTwoName + "'s Turn");
         }
     }
 
@@ -159,7 +173,7 @@ public class GameFragment extends Fragment implements View.OnClickListener {
         rounds = 0;
         isPlayerOneTurn = true;
         playerOneChoosesX = true;
-        playerStatus.setText("Player-1's Turn");
+        playerStatus.setText(playerOneName + "'s Turn");
 
         for (int i = 0; i < 16; i++) {
             gameState[i] = 2;
@@ -178,16 +192,98 @@ public class GameFragment extends Fragment implements View.OnClickListener {
     private void showChooseSymbolDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Choose Symbol")
-                .setMessage("Player-1, choose X or O")
+                .setMessage(playerOneName + ", choose X or O")
                 .setPositiveButton("X", (dialog, which) -> {
                     playerOneChoosesX = true;
-                    playerStatus.setText("Player-1's Turn");
+                    playerStatus.setText(playerOneName + "'s Turn");
+                    showPlayerTwoNameDialog();
                 })
                 .setNegativeButton("O", (dialog, which) -> {
                     playerOneChoosesX = false;
-                    playerStatus.setText("Player-1's Turn");
+                    playerStatus.setText(playerOneName + "'s Turn");
+                    showPlayerTwoNameDialog();
                 })
                 .setCancelable(false)
                 .show();
+    }
+
+    private void showPlayerTwoNameDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        LayoutInflater inflater = requireActivity().getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_player_name, null);
+        builder.setView(dialogView);
+
+        EditText editTextNickname = dialogView.findViewById(R.id.editTextNickname);
+
+        builder.setTitle("Player-2 Name")
+                .setPositiveButton("OK", (dialog, which) -> {
+                    String nickname = editTextNickname.getText().toString().trim();
+                    if (!nickname.isEmpty()) {
+                        insertPlayerTwoName(nickname);
+                        playerTwoName = nickname;
+                        playerTwoNameTextView.setText(playerTwoName);
+                        playerStatus.setText(playerOneName + "'s Turn");
+                    } else {
+                        Toast.makeText(getActivity(), "Please enter a nickname for Player-2", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton("Cancel", (dialog, which) -> {
+                    // Handle cancel if needed
+                })
+                .setCancelable(false)
+                .show();
+    }
+
+    private void insertPlayerTwoName(String nickname) {
+        ContentValues values = new ContentValues();
+        values.put("nickname", nickname);
+        db.insert("PLAYER", null, values);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        db.close(); // Close the database connection when fragment is destroyed
+    }
+
+    // Fetch player names from database
+// Fetch player names from database
+    private void fetchPlayerNames() {
+        // Query for Player-1 name from Host table
+        Cursor cursorHost = db.query("Host", new String[]{"nickname"}, null, null, null, null, null);
+        if (cursorHost.moveToFirst()) {
+            int nicknameIndex = cursorHost.getColumnIndex("nickname");
+            if (nicknameIndex >= 0) {
+                playerOneName = cursorHost.getString(nicknameIndex);
+            } else {
+                // Log an error or handle the situation where "nickname" column is not found
+                // Example: Log.e(TAG, "Column 'nickname' not found in Host table");
+            }
+        }
+        cursorHost.close();
+
+        // Query for Player-2 name from Player table
+        Cursor cursorPlayer = db.query("Player", new String[]{"nickname"}, null, null, null, null, null);
+        if (cursorPlayer.moveToFirst()) {
+            int nicknameIndex = cursorPlayer.getColumnIndex("nickname");
+            if (nicknameIndex >= 0) {
+                playerTwoName = cursorPlayer.getString(nicknameIndex);
+            } else {
+                // Log an error or handle the situation where "nickname" column is not found
+                // Example: Log.e(TAG, "Column 'nickname' not found in Player table");
+            }
+        }
+        cursorPlayer.close();
+
+        // Update TextViews with player names
+        playerOneNameTextView.setText(playerOneName);
+        playerTwoNameTextView.setText(playerTwoName);
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        fetchPlayerNames();
     }
 }
