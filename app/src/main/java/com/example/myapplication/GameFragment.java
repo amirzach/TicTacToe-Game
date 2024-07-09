@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -98,11 +99,11 @@ public class GameFragment extends Fragment implements View.OnClickListener {
 
         if (isPlayerOneTurn) {
             clickedButton.setText(playerOneChoosesX ? "X" : "O");
-            clickedButton.setTextColor(playerOneChoosesX ? Color.parseColor("#ffc34a") : Color.parseColor("#70fc3a"));
+            clickedButton.setTextColor(Color.parseColor("#000000")); // Set color to black
             gameState[clickedIndex] = playerOneChoosesX ? 0 : 1;
         } else {
             clickedButton.setText(playerOneChoosesX ? "O" : "X"); // Opponent gets opposite symbol
-            clickedButton.setTextColor(playerOneChoosesX ? Color.parseColor("#70fc3a") : Color.parseColor("#ffc34a"));
+            clickedButton.setTextColor(Color.parseColor("#000000")); // Set color to black
             gameState[clickedIndex] = playerOneChoosesX ? 1 : 0;
         }
 
@@ -117,53 +118,36 @@ public class GameFragment extends Fragment implements View.OnClickListener {
                 playerStatus.setText("Player-2 has won this round");
             }
 
-            if (playerOneScoreCount >= 2 || playerTwoScoreCount >= 2) {
-                String winner = playerOneScoreCount > playerTwoScoreCount ? "Player-1" : "Player-2";
-                playerStatus.setText(winner + " wins the game!");
-                disableButtons();
+            if (playerOneScoreCount == 3) {
+                Toast.makeText(getActivity(), "Player-1 wins the game!", Toast.LENGTH_SHORT).show();
+                playerStatus.setText("Player-1 has won the game!");
+                resetGame();
+            } else if (playerTwoScoreCount == 3) {
+                Toast.makeText(getActivity(), "Player-2 wins the game!", Toast.LENGTH_SHORT).show();
+                playerStatus.setText("Player-2 has won the game!");
+                resetGame();
             }
+
+            updatePlayerScore();
         } else if (rounds == 16) {
-            playerStatus.setText("No Winner this round");
-            if (playerOneScoreCount >= 2 || playerTwoScoreCount >= 2) {
-                String winner = playerOneScoreCount > playerTwoScoreCount ? "Player-1" : "Player-2";
-                playerStatus.setText(winner + " wins the game!");
-                disableButtons();
-            }
+            playerStatus.setText("It's a draw!");
+            playAgain();
         } else {
             isPlayerOneTurn = !isPlayerOneTurn;
-            updatePlayerStatus(); // Corrected method name here
+            playerStatus.setText(isPlayerOneTurn ? "Player-1's Turn" : "Player-2's Turn");
         }
-
-        updatePlayerScore();
     }
 
     private boolean checkWinner() {
-        boolean winnerResult = false;
         for (int[] winningPosition : winningPositions) {
-            if (gameState[winningPosition[0]] == gameState[winningPosition[1]] &&
-                    gameState[winningPosition[1]] == gameState[winningPosition[2]] &&
-                    gameState[winningPosition[2]] == gameState[winningPosition[3]] &&
-                    gameState[winningPosition[0]] != 2) {
-                winnerResult = true;
-                break;
+            if (gameState[winningPosition[0]] == gameState[winningPosition[1]]
+                    && gameState[winningPosition[1]] == gameState[winningPosition[2]]
+                    && gameState[winningPosition[2]] == gameState[winningPosition[3]]
+                    && gameState[winningPosition[0]] != 2) {
+                return true;
             }
         }
-        return winnerResult;
-    }
-
-    private void playAgain() {
-        rounds = 0;
-        isPlayerOneTurn = true;
-        playerStatus.setText("Status");
-        for (int i = 0; i < gameState.length; i++) {
-            gameState[i] = 2;
-            buttons[i].setText("");
-            buttons[i].setTextColor(Color.parseColor("#000000"));
-        }
-        enableButtons();
-
-        // Prompt user to choose X or O again
-        showChooseSymbolDialog();
+        return false;
     }
 
     private void updatePlayerScore() {
@@ -171,37 +155,39 @@ public class GameFragment extends Fragment implements View.OnClickListener {
         playerTwoScore.setText(String.valueOf(playerTwoScoreCount));
     }
 
-    private void disableButtons() {
-        for (Button button : buttons) {
-            button.setEnabled(false);
+    private void playAgain() {
+        rounds = 0;
+        isPlayerOneTurn = true;
+        playerOneChoosesX = true;
+        playerStatus.setText("Player-1's Turn");
+
+        for (int i = 0; i < 16; i++) {
+            gameState[i] = 2;
+            buttons[i].setText("");
+            buttons[i].setTextColor(Color.parseColor("#000000"));
         }
     }
 
-    private void enableButtons() {
-        for (Button button : buttons) {
-            button.setEnabled(true);
-        }
-    }
-
-    private void updatePlayerStatus() {
-        if (isPlayerOneTurn) {
-            playerStatus.setText("Player-1's Turn");
-        } else {
-            playerStatus.setText("Player-2's Turn");
-        }
+    private void resetGame() {
+        playerOneScoreCount = 0;
+        playerTwoScoreCount = 0;
+        updatePlayerScore();
+        playAgain();
     }
 
     private void showChooseSymbolDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        builder.setTitle("Choose X or O");
-
-        String[] symbols = {"X", "O"};
-        builder.setSingleChoiceItems(symbols, playerOneChoosesX ? 0 : 1, (dialog, which) -> {
-            playerOneChoosesX = which == 0; // True for X, False for O
-            dialog.dismiss();
-        });
-
-        AlertDialog dialog = builder.create();
-        dialog.show();
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Choose Symbol")
+                .setMessage("Player-1, choose X or O")
+                .setPositiveButton("X", (dialog, which) -> {
+                    playerOneChoosesX = true;
+                    playerStatus.setText("Player-1's Turn");
+                })
+                .setNegativeButton("O", (dialog, which) -> {
+                    playerOneChoosesX = false;
+                    playerStatus.setText("Player-1's Turn");
+                })
+                .setCancelable(false)
+                .show();
     }
 }
