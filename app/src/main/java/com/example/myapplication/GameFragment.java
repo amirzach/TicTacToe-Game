@@ -1,6 +1,8 @@
 package com.example.myapplication;
 
 import android.app.AlertDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -17,6 +19,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 public class GameFragment extends Fragment implements View.OnClickListener {
 
@@ -44,7 +47,20 @@ public class GameFragment extends Fragment implements View.OnClickListener {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_game, container, false);
+        View view = inflater.inflate(R.layout.fragment_game, container, false);
+
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("user_session", Context.MODE_PRIVATE);
+        boolean isLoggedIn = sharedPreferences.getBoolean("is_logged_in", false);
+
+        if (!isLoggedIn) {
+            // User is not logged in, navigate to LoginFragment
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            transaction.replace(R.id.fragment_container, new LoginFragment());
+            transaction.addToBackStack(null);
+            transaction.commit();
+        }
+
+        return view;
     }
 
     @Override
@@ -52,6 +68,9 @@ public class GameFragment extends Fragment implements View.OnClickListener {
         super.onViewCreated(view, savedInstanceState);
 
         db = new DBHelper(getContext()).getWritableDatabase();
+
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("user_session", Context.MODE_PRIVATE);
+        boolean isLoggedIn = sharedPreferences.getBoolean("is_logged_in", false);
 
         playerOneScore = view.findViewById(R.id.score_Player1);
         playerTwoScore = view.findViewById(R.id.score_Player2);
@@ -96,8 +115,10 @@ public class GameFragment extends Fragment implements View.OnClickListener {
 
         playAgain.setOnClickListener(v -> playAgain());
 
-        // Prompt user to choose X or O at the start
-        showChooseSymbolDialog();
+        if(isLoggedIn) {
+            // Prompt user to choose X or O at the start
+            showChooseSymbolDialog();
+        }
     }
 
     @Override

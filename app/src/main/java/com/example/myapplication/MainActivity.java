@@ -6,16 +6,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Toast;
 import com.google.android.material.navigation.NavigationView;
+import android.content.SharedPreferences;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private DrawerLayout drawerLayout;
-    private MenuItem signUpMenuItem;
+    private MenuItem signUpMenuItem, signInMenuItem, logoutMenuItem;
     DBHelper DBHelper = new DBHelper(this);
 
     @Override
@@ -35,19 +38,40 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
-            navigationView.setCheckedItem(R.id.nav_home);
-        }
-
-        //Get the Sign Up menu item
+        //Get the Sign Up, Sign In and Logout menu item
         signUpMenuItem = navigationView.getMenu().findItem(R.id.nav_Signup);
+        signInMenuItem = navigationView.getMenu().findItem(R.id.nav_Signin);
+        logoutMenuItem = navigationView.getMenu().findItem(R.id.nav_logout);
+
+        SharedPreferences sharedPreferences = getSharedPreferences("user_session", Context.MODE_PRIVATE);
+        boolean isLoggedIn = sharedPreferences.getBoolean("is_logged_in", false);
+
+        //Check if user logged in
+//        if (isLoggedIn) {
+//            signInMenuItem.setVisible(false);
+//            logoutMenuItem.setVisible(true);
+//        } else {
+//            signInMenuItem.setVisible(true);
+//            logoutMenuItem.setVisible(false);
+//        }
+
+        if (savedInstanceState == null) {
+            if (isLoggedIn) {
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
+                navigationView.setCheckedItem(R.id.nav_home);
+            } else {
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new LoginFragment()).commit();
+                navigationView.setCheckedItem(R.id.nav_Signin);
+            }
+        }
 
         // Check if host exists in the database
         if (!DBHelper.isHostExists()) {
             // No host exists
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SignupFragment()).commit();
             navigationView.setCheckedItem(R.id.nav_Signup);
+
+            signUpMenuItem.setVisible(true);
         } else {
             //Hide Sign Up menu item
             signUpMenuItem.setVisible(false);
@@ -72,6 +96,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
 
+        SharedPreferences sharedPreferences = getSharedPreferences("user_session", Context.MODE_PRIVATE);
+        boolean isLoggedIn = sharedPreferences.getBoolean("is_logged_in", false);
+
         if (id == R.id.nav_home) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
         } else if (id == R.id.nav_Signin) {
@@ -83,6 +110,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else if (id == R.id.nav_Report) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ReportFragment()).commit();
         } else if (id == R.id.nav_logout) {
+            // Logout and clear session
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.clear();
+            editor.apply();
+
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
         }
 
