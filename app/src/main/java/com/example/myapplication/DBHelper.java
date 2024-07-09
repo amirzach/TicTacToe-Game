@@ -9,6 +9,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.Nullable;
 
+import java.util.ArrayList;
+
 public class DBHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "TicTacToeDB";
@@ -170,6 +172,26 @@ public class DBHelper extends SQLiteOpenHelper {
                 db.close();
             }
         }
+    }
+
+    public ArrayList<Float> getPoints(){
+        SQLiteDatabase db = null;
+
+        ArrayList<Float> result = new ArrayList<>();
+
+        float points;
+        db=this.getReadableDatabase();
+        String query = "SELECT points FROM "+ TABLE_PLAYER;
+        Cursor cursor=db.rawQuery(query,null);
+        int iPoints=cursor.getColumnIndex(KEY_PLAYER_POINTS);
+        for (cursor.moveToFirst();!cursor.isAfterLast();cursor.moveToNext()){
+            points =cursor.getFloat(iPoints);
+            result.add(points);
+
+        }
+        cursor.close();
+        db.close();
+        return result;
     }
 
 }
