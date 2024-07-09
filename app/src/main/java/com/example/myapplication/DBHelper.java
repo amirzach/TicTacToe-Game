@@ -43,7 +43,7 @@ public class DBHelper extends SQLiteOpenHelper {
         String CREATE_TABLE_PLAYER = "CREATE TABLE " + TABLE_PLAYER + "("
                 + KEY_PLAYER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + KEY_PLAYER_NICKNAME + " TEXT UNIQUE,"
-                + KEY_PLAYER_POINTS + " TEXT)";
+                + KEY_PLAYER_POINTS + " INT)";
 
         db.execSQL(CREATE_TABLE_HOST);
         db.execSQL(CREATE_TABLE_PLAYER);
@@ -126,7 +126,10 @@ public class DBHelper extends SQLiteOpenHelper {
         Cursor cursor = null;
         try {
             db = this.getReadableDatabase();
-            cursor = db.rawQuery("SELECT * FROM " + TABLE_HOST + " WHERE " + KEY_HOST_USERNAME + " = ? AND " + KEY_HOST_PASSWORD + " = ?", new String[]{username, password});
+            cursor = db.rawQuery("SELECT * FROM " + TABLE_HOST
+                    + " WHERE " + KEY_HOST_USERNAME
+                    + " = ? AND " + KEY_HOST_PASSWORD
+                    + " = ?", new String[]{username, password});
             return cursor.getCount() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -146,7 +149,9 @@ public class DBHelper extends SQLiteOpenHelper {
         Cursor cursor = null;
         try {
             db = this.getReadableDatabase();
-            cursor = db.rawQuery("SELECT * FROM " + TABLE_HOST + " WHERE " + KEY_HOST_USERNAME + " = ?", new String[]{username});
+            cursor = db.rawQuery("SELECT * FROM "
+                    + TABLE_HOST + " WHERE "
+                    + KEY_HOST_USERNAME + " = ?", new String[]{username});
             return cursor.getCount() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
