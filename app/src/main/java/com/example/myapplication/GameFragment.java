@@ -147,9 +147,13 @@ public class GameFragment extends Fragment implements View.OnClickListener {
             if (isPlayerOneTurn) {
                 playerOneScoreCount++;
                 playerStatus.setText(playerOneChoosesX ? playerOneName + " has won this round" : playerOneName + " has won this round");
+                updatePoints(playerOneName, 3, true, false); // Player-1 wins
+                updatePoints(playerTwoName, 0, false, false); // Player-2 loses
             } else {
                 playerTwoScoreCount++;
                 playerStatus.setText(playerTwoName + " has won this round");
+                updatePoints(playerTwoName, 3, true, false); // Player-2 wins
+                updatePoints(playerOneName, 0, false, false); // Player-1 loses
             }
 
             if (playerOneScoreCount == 3) {
@@ -167,12 +171,41 @@ public class GameFragment extends Fragment implements View.OnClickListener {
             }
         } else if (rounds == 16) {
             playerStatus.setText("It's a draw!");
+            updatePoints(playerOneName, 1, false, true); // Draw for Player-1
+            updatePoints(playerTwoName, 1, false, true); // Draw for Player-2
             playAgain();
         } else {
             isPlayerOneTurn = !isPlayerOneTurn;
             playerStatus.setText(isPlayerOneTurn ? playerOneName + "'s Turn" : playerTwoName + "'s Turn");
         }
     }
+
+    private void updatePoints(String playerName, int points, boolean isWin, boolean isDraw) {
+        DBHelper dbHelper = new DBHelper(getContext());
+
+        try {
+            int currentPoints = dbHelper.getPlayerPoints(playerName);
+            int newPoints = currentPoints + points;
+
+            // Update wins, loses, and draws
+            if (isWin) {
+                dbHelper.updatePlayerWin(playerName, 1);
+            } else if (isDraw) {
+                dbHelper.updatePlayerDraw(playerName, 1);
+            } else {
+                dbHelper.updatePlayerLose(playerName, 1);
+            }
+
+            dbHelper.updatePlayerPoints(playerName, newPoints);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            dbHelper.close();
+        }
+    }
+
+
+
 
     private boolean checkWinner() {
         for (int[] winningPosition : winningPositions) {

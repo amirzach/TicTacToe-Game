@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -51,7 +52,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 + KEY_PLAYER_WINS + " INT,"
                 + KEY_PLAYER_LOSE + " INT,"
                 + KEY_PLAYER_DRAW + " INT,"
-                + KEY_PLAYER_POINTS + " INT)";
+                + KEY_PLAYER_POINTS + " INT DEFAULT 0)";
 
         db.execSQL(CREATE_TABLE_HOST);
         db.execSQL(CREATE_TABLE_PLAYER);
@@ -67,26 +68,54 @@ public class DBHelper extends SQLiteOpenHelper {
     public boolean createHost(String username, String nickname, String password) {
         SQLiteDatabase db = null;
         try {
-            if (isHostExists()) {
-                return true; 
-            }
             db = this.getWritableDatabase();
-            ContentValues values = new ContentValues();
-            values.put(KEY_HOST_USERNAME, username);
-            values.put(KEY_HOST_NICKNAME, nickname);
-            values.put(KEY_HOST_PASSWORD, password);
 
-            long result = db.insert(TABLE_HOST, null, values);
-            return result != -1;
+            // Begin transaction
+            db.beginTransaction();
+
+            // Insert into TABLE_HOST
+            ContentValues hostValues = new ContentValues();
+            hostValues.put(KEY_HOST_USERNAME, username);
+            hostValues.put(KEY_HOST_NICKNAME, nickname);
+            hostValues.put(KEY_HOST_PASSWORD, password);
+            long hostResult = db.insert(TABLE_HOST, null, hostValues);
+
+            // Check if host insertion was successful
+            if (hostResult == -1) {
+                db.endTransaction();
+                return false; // Return false if host insertion failed
+            }
+
+            // Insert host data into TABLE_PLAYER
+            ContentValues playerValues = new ContentValues();
+            playerValues.put(KEY_PLAYER_NICKNAME, nickname);
+            playerValues.put(KEY_PLAYER_WINS, 0);
+            playerValues.put(KEY_PLAYER_LOSE, 0);
+            playerValues.put(KEY_PLAYER_DRAW, 0);
+            playerValues.put(KEY_PLAYER_POINTS, 0);
+            long playerResult = db.insert(TABLE_PLAYER, null, playerValues);
+
+            // Check if host insertion in table player was successful
+            if (playerResult == -1) {
+                db.endTransaction();
+                return false; // Return false if player insertion failed
+            }
+
+            // Commit transaction
+            db.setTransactionSuccessful();
+            return true; // Return true if both insertions were successful
         } catch (SQLException e) {
             e.printStackTrace();
-            return false;
+            return false; // Return false in case of exception
         } finally {
-            if (db != null && db.isOpen()) {
+            // End transaction and close database
+            if (db != null) {
+                db.endTransaction();
                 db.close();
             }
         }
     }
+
 
     protected boolean isHostExists() {
         SQLiteDatabase db = null;
@@ -192,6 +221,47 @@ public class DBHelper extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         return result;
+    }
+
+    public void updatePlayerPoints(String nickname, int points) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(KEY_PLAYER_POINTS, points);
+        db.update(TABLE_PLAYER, values, KEY_PLAYER_NICKNAME + " = ?", new String[]{nickname});
+    }
+    public void updatePlayerWin(String playerName, int increment) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("UPDATE PLAYER SET wins = wins + ? WHERE nickname = ?", new Object[]{increment, playerName});
+    }
+
+    public void updatePlayerLose(String playerName, int increment) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("UPDATE PLAYER SET lose = lose + ? WHERE nickname = ?", new Object[]{increment, playerName});
+    }
+
+    public void updatePlayerDraw(String playerName, int increment) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("UPDATE PLAYER SET draw = draw + ? WHERE nickname = ?", new Object[]{increment, playerName});
+    }
+
+
+    public int getPlayerPoints(String nickname) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_PLAYER, new String[]{KEY_PLAYER_POINTS}, KEY_PLAYER_NICKNAME + " = ?", new String[]{nickname}, null, null, null);
+        if (cursor != null && cursor.moveToFirst()) {
+            int columnIndex = cursor.getColumnIndex(KEY_PLAYER_POINTS);
+            if (columnIndex != -1) {
+                int points = cursor.isNull(columnIndex) ? 0 : cursor.getInt(columnIndex);
+                cursor.close();
+                return points;
+            } else {
+                Log.e("DBHelper", "Column " + KEY_PLAYER_POINTS + " not found");
+                cursor.close();
+                return 0; // Default to 0 if the column is not found
+            }
+        } else {
+            return 0; // Default to 0 if the player is not found
+        }
     }
 
 }
