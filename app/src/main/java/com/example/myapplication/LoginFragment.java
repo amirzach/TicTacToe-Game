@@ -23,7 +23,7 @@ public class LoginFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+
         View view = inflater.inflate(R.layout.fragment_login, container, false);
 
         dbHelper = new DBHelper(getActivity());
@@ -61,7 +61,7 @@ public class LoginFragment extends Fragment {
                     return;
                 }
 
-                if (dbHelper.checkUser(username, password)) {
+                if (dbHelper.hostValidation(username, password)) {
                     Toast.makeText(getActivity(), "Login successful!", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(getActivity(), "Invalid username or password.", Toast.LENGTH_SHORT).show();

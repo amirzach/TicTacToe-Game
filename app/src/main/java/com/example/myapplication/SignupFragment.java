@@ -57,7 +57,7 @@ public class SignupFragment extends Fragment {
                     // Username is already taken, show a toast message
                     Toast.makeText(getActivity(), "Username already exists. Please choose another one.", Toast.LENGTH_SHORT).show();
                 } else {
-                    if (dbHelper.addUser(username, nickname, password)) {
+                    if (dbHelper.createHost(username, nickname, password)) {
                         FragmentTransaction transaction = getFragmentManager().beginTransaction();
                         transaction.replace(R.id.fragment_container, new LoginFragment());
                         transaction.addToBackStack(null);
