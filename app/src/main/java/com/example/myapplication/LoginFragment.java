@@ -62,7 +62,10 @@ public class LoginFragment extends Fragment {
                 }
 
                 if (dbHelper.hostValidation(username, password)) {
-                    Toast.makeText(getActivity(), "Login successful!", Toast.LENGTH_SHORT).show();
+                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                    transaction.replace(R.id.fragment_container, new GameFragment());
+                    transaction.addToBackStack(null);
+                    transaction.commit();
                 } else {
                     Toast.makeText(getActivity(), "Invalid username or password.", Toast.LENGTH_SHORT).show();
                 }

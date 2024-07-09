@@ -12,7 +12,7 @@ import androidx.annotation.Nullable;
 public class DBHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "TicTacToeDB";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
     private static final String TABLE_HOST = "HOST";
     private static final String TABLE_PLAYER = "PLAYER";
     private static final String KEY_HOST_ID = "id";
