@@ -37,6 +37,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
             navigationView.setCheckedItem(R.id.nav_home);
         }
+
+        DBHelper DBHelper = new DBHelper(this);
+        // Check if host exists in the database
+        if (!DBHelper.isHostExists()) {
+            // No host exists
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SignupFragment()).commit();
+            navigationView.setCheckedItem(R.id.nav_Signup);
+        } else {
+            // Host exists
+            if (savedInstanceState == null) {
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
+                navigationView.setCheckedItem(R.id.nav_home);
+            }
+        }
     }
 
     public void toggleDrawer() {
