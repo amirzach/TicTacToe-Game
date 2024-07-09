@@ -42,7 +42,7 @@ public class GameFragment extends Fragment implements View.OnClickListener {
     private int playerTwoScoreCount = 0;
 
     private String playerOneName = ""; // Store player one's name
-    private String playerTwoName = ""; // Store player two's name
+    private String playerTwoName = "Player-2"; // Store player two's name
 
     @Nullable
     @Override
@@ -116,6 +116,7 @@ public class GameFragment extends Fragment implements View.OnClickListener {
         playAgain.setOnClickListener(v -> playAgain());
 
         if (isLoggedIn) {
+            fetchPlayerNames();
             // Prompt user to choose X or O at the start
             showChooseSymbolDialog();
         }
@@ -282,7 +283,7 @@ public class GameFragment extends Fragment implements View.OnClickListener {
         cursorHost.close();
 
         // Query for Player-2 name from Player table
-        Cursor cursorPlayer = db.query("Player", new String[]{"nickname"}, null, null, null, null, null);
+        /*Cursor cursorPlayer = db.query("Player", new String[]{"nickname"}, null, null, null, null, null);
         if (cursorPlayer.moveToFirst()) {
             int nicknameIndex = cursorPlayer.getColumnIndex("nickname");
             if (nicknameIndex >= 0) {
@@ -292,7 +293,7 @@ public class GameFragment extends Fragment implements View.OnClickListener {
                 // Example: Log.e(TAG, "Column 'nickname' not found in Player table");
             }
         }
-        cursorPlayer.close();
+        cursorPlayer.close();*/
 
         // Update TextViews with player names
         playerOneNameTextView.setText(playerOneName);
