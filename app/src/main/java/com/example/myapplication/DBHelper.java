@@ -21,6 +21,9 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String KEY_HOST_PASSWORD = "password";
     private static final String KEY_PLAYER_ID = "id";
     private static final String KEY_PLAYER_NICKNAME = "nickname";
+    private static final String KEY_PLAYER_WINS = "wins";
+    private static final String KEY_PLAYER_LOSE = "lose";
+    private static final String KEY_PLAYER_DRAW = "draw";
     private static final String KEY_PLAYER_POINTS = "points";
 
     public DBHelper(@Nullable Context context) {
@@ -43,6 +46,9 @@ public class DBHelper extends SQLiteOpenHelper {
         String CREATE_TABLE_PLAYER = "CREATE TABLE " + TABLE_PLAYER + "("
                 + KEY_PLAYER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + KEY_PLAYER_NICKNAME + " TEXT UNIQUE,"
+                + KEY_PLAYER_WINS + " INT,"
+                + KEY_PLAYER_LOSE + " INT,"
+                + KEY_PLAYER_DRAW + " INT,"
                 + KEY_PLAYER_POINTS + " INT)";
 
         db.execSQL(CREATE_TABLE_HOST);
