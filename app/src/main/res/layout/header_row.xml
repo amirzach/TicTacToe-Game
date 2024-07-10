@@ -7,52 +7,57 @@
     android:background="@color/black">
 
     <TextView
-        android:id="@+id/textViewNickName"
+        android:id="@+id/textViewHeaderNickName"
         android:layout_width="35dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:text="Nickname"
-        android:textColor="@color/white"
         android:textSize="18sp"
-        android:gravity="center" />
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:gravity="center"/>
 
     <TextView
-        android:id="@+id/textViewWins"
+        android:id="@+id/textViewHeaderWins"
         android:layout_width="16dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:text="W"
-        android:textColor="@color/white"
         android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
         android:gravity="center" />
 
     <TextView
-        android:id="@+id/textViewLose"
+        android:id="@+id/textViewHeaderLose"
         android:layout_width="16dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:text="L"
-        android:textColor="@color/white"
         android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
         android:gravity="center" />
 
     <TextView
-        android:id="@+id/textViewDraw"
+        android:id="@+id/textViewHeaderDraw"
         android:layout_width="16dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:text="D"
-        android:textColor="@color/white"
         android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
         android:gravity="center" />
 
     <TextView
-        android:id="@+id/textViewPoints"
+        android:id="@+id/textViewHeaderPoints"
         android:layout_width="16dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:text="Points"
-        android:textColor="@color/white"
         android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
         android:gravity="center" />
 </LinearLayout>
