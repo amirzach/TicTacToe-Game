@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -293,9 +294,11 @@ public class GameFragment extends Fragment implements View.OnClickListener {
         EditText editTextNickname = dialogView.findViewById(R.id.editTextNickname);
 
         builder.setTitle("Player-2 Name")
-                .setPositiveButton("OK", null);
+                .setPositiveButton("OK", null)
+                .setCancelable(false);  // Ensure the dialog is not cancelable
 
         AlertDialog dialog = builder.create();
+        dialog.setCanceledOnTouchOutside(false);
         dialog.show();
 
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
@@ -310,7 +313,22 @@ public class GameFragment extends Fragment implements View.OnClickListener {
                 editTextNickname.setError("Please enter a nickname for Player-2");
             }
         });
+
+        // Handle the back button press
+        dialog.setOnKeyListener((dialogInterface, keyCode, event) -> {
+            if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
+                String nickname = editTextNickname.getText().toString().trim();
+                if (!nickname.isEmpty()) {
+                    dialog.dismiss();
+                } else {
+                    Toast.makeText(getActivity(), "Please enter a nickname for Player-2", Toast.LENGTH_SHORT).show();
+                }
+                return true;
+            }
+            return false;
+        });
     }
+
 
 
     private void insertPlayerTwoName(String nickname) {
