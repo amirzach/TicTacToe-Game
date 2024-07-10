@@ -35,6 +35,7 @@ public class ReportFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_report, container, false);
         super.onCreate(savedInstanceState);
+        int[] colors = {Color.BLUE, Color.RED, Color.parseColor("#FF00FF")};
 
         dbHelper = new DBHelper(getActivity());
 
@@ -74,8 +75,15 @@ public class ReportFragment extends Fragment {
             pieEntries.add(new PieEntry(losePercentage, "Losses"));
             pieEntries.add(new PieEntry(drawPercentage, "Draws"));
 
+            // Create PieDataSet with custom colors
             PieDataSet pieDataSet = new PieDataSet(pieEntries, "");
-            pieDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
+            pieDataSet.setColors(colors); // Set the custom colors array
+
+            // Other pie chart customization
+            pieDataSet.setValueTextColor(Color.BLACK); // Example of setting text color
+            pieDataSet.setValueTextSize(12f); // Example of setting text size
+
+
 
             PieData pieData = new PieData(pieDataSet);
             pieChart.setData(pieData);
