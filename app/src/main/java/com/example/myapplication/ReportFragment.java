@@ -32,35 +32,25 @@ public class ReportFragment extends Fragment {
     PieChart pieChart;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_report, container, false);
+        super.onCreate(savedInstanceState);
 
         dbHelper = new DBHelper(getActivity());
 
         barChart = view.findViewById(R.id.bar_chart);
         pieChart = view.findViewById(R.id.pie_chart);
 
-        // Bar chart setup
-        setupBarChart();
-
-        // Pie chart setup
-        setupPieChart();
-
-        return view;
-    }
-
-    private void setupBarChart() {
         ArrayList<BarEntry> barEntries = new ArrayList<>();
-        ArrayList<Float> rst = dbHelper.getPoints();
+        ArrayList<PieEntry> pieEntries = new ArrayList<>();
 
-        for (int i = 0; i < rst.size(); i++) {
-            float points = rst.get(i);
+        // Bar chart
+        ArrayList<Float> pointsList = dbHelper.getPoints();
+        for (int i = 0; i < pointsList.size(); i++) {
+            float points = pointsList.get(i);
             BarEntry barEntry = new BarEntry(i + 1, points);
             barEntries.add(barEntry);
         }
-
         BarDataSet barDataSet = new BarDataSet(barEntries, "Player");
         barDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
         barDataSet.setDrawValues(true);
@@ -68,27 +58,33 @@ public class ReportFragment extends Fragment {
         barChart.setData(new BarData(barDataSet));
         barChart.getDescription().setText("");
         barChart.getDescription().setTextColor(Color.BLUE);
-    }
 
-    private void setupPieChart() {
-        ArrayList<PieEntry> pieEntries = new ArrayList<>();
+        // Pie chart for host's win, lose, and draw percentages
+        int hostWins = dbHelper.getHostWins();
+        int hostLosses = dbHelper.getHostLosses();
+        int hostDraws = dbHelper.getHostDraws();
+        int totalGames = hostWins + hostLosses + hostDraws;
 
-        // Fetch data from the database
-        int totalWins = dbHelper.getTotalWins();
-        int totalLosses = dbHelper.getTotalLosses();
-        int totalDraws = dbHelper.getTotalDraws();
+        if (totalGames > 0) {
+            float winPercentage = (hostWins / (float) totalGames) * 100;
+            float losePercentage = (hostLosses / (float) totalGames) * 100;
+            float drawPercentage = (hostDraws / (float) totalGames) * 100;
 
-        // Create PieEntries for wins, losses, and draws
-        pieEntries.add(new PieEntry(totalWins, "Wins"));
-        pieEntries.add(new PieEntry(totalLosses, "Losses"));
-        pieEntries.add(new PieEntry(totalDraws, "Draws"));
+            pieEntries.add(new PieEntry(winPercentage, "Wins"));
+            pieEntries.add(new PieEntry(losePercentage, "Losses"));
+            pieEntries.add(new PieEntry(drawPercentage, "Draws"));
 
-        PieDataSet pieDataSet = new PieDataSet(pieEntries, "");
-        pieDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
+            PieDataSet pieDataSet = new PieDataSet(pieEntries, "Host Performance");
+            pieDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
 
-        pieChart.setData(new PieData(pieDataSet));
-        pieChart.animateXY(5000, 5000);
-        pieChart.getDescription().setText("");
-        pieChart.getDescription().setTextColor(Color.RED);
+            PieData pieData = new PieData(pieDataSet);
+            pieChart.setData(pieData);
+            pieChart.invalidate(); // Refresh the chart
+
+            pieChart.getDescription().setText("");
+            pieChart.getDescription().setTextColor(Color.RED);
+        }
+
+        return view;
     }
 }

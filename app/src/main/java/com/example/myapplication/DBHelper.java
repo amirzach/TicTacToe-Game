@@ -312,42 +312,41 @@ public class DBHelper extends SQLiteOpenHelper {
         cursor.close();
         return playerList;
     }
-    public int getTotalWins() {
+    public int getHostWins() {
         SQLiteDatabase db = this.getReadableDatabase();
-        String query = "SELECT SUM(wins) AS total_wins FROM " + TABLE_PLAYER;
+        String query = "SELECT wins FROM " + TABLE_PLAYER + " WHERE " + KEY_PLAYER_ID + " = 1"; // Host ID is 1
         Cursor cursor = db.rawQuery(query, null);
-        int totalWins = 0;
+        int wins = 0;
         if (cursor.moveToFirst()) {
-            totalWins = cursor.getInt(cursor.getColumnIndexOrThrow("total_wins"));
+            wins = cursor.getInt(cursor.getColumnIndexOrThrow("wins"));
         }
         cursor.close();
-        return totalWins;
+        return wins;
     }
 
-    public int getTotalLosses() {
+    public int getHostLosses() {
         SQLiteDatabase db = this.getReadableDatabase();
-        String query = "SELECT SUM(lose) AS total_lose FROM " + TABLE_PLAYER;
+        String query = "SELECT lose FROM " + TABLE_PLAYER + " WHERE " + KEY_PLAYER_ID + " = 1"; // Host ID is 1
         Cursor cursor = db.rawQuery(query, null);
-        int totalLosses = 0;
+        int losses = 0;
         if (cursor.moveToFirst()) {
-            totalLosses = cursor.getInt(cursor.getColumnIndexOrThrow("total_lose"));
+            losses = cursor.getInt(cursor.getColumnIndexOrThrow("lose"));
         }
         cursor.close();
-        return totalLosses;
+        return losses;
     }
 
-    public int getTotalDraws() {
+    public int getHostDraws() {
         SQLiteDatabase db = this.getReadableDatabase();
-        String query = "SELECT SUM(draw) AS total_draw FROM " + TABLE_PLAYER;
+        String query = "SELECT draw FROM " + TABLE_PLAYER + " WHERE " + KEY_PLAYER_ID + " = 1"; // Host ID is 1
         Cursor cursor = db.rawQuery(query, null);
-        int totalDraws = 0;
+        int draws = 0;
         if (cursor.moveToFirst()) {
-            totalDraws = cursor.getInt(cursor.getColumnIndexOrThrow("total_draw"));
+            draws = cursor.getInt(cursor.getColumnIndexOrThrow("draw"));
         }
         cursor.close();
-        return totalDraws;
+        return draws;
     }
-
 
 
 }
