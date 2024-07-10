@@ -288,4 +288,28 @@ public class DBHelper extends SQLiteOpenHelper {
         cursor.close();
         return playerList;
     }
+
+    // Method to search players by name
+    public List<Player> searchPlayersByName(String nickname) {
+        List<Player> playerList = new ArrayList<>();
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        String selectQuery = "SELECT * FROM " + TABLE_PLAYER + " WHERE " + KEY_PLAYER_NICKNAME + " LIKE ?";
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{"%" + nickname + "%"});
+
+        if (cursor.moveToFirst()) {
+            do {
+                @SuppressLint("Range") Player player = new Player(
+                        cursor.getInt(cursor.getColumnIndex(KEY_PLAYER_ID)),
+                        cursor.getString(cursor.getColumnIndex(KEY_PLAYER_NICKNAME)),
+                        cursor.getInt(cursor.getColumnIndex(KEY_PLAYER_WINS)),
+                        cursor.getInt(cursor.getColumnIndex(KEY_PLAYER_LOSE)),
+                        cursor.getInt(cursor.getColumnIndex(KEY_PLAYER_DRAW)),
+                        cursor.getInt(cursor.getColumnIndex(KEY_PLAYER_POINTS)));
+                playerList.add(player);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return playerList;
+    }
 }

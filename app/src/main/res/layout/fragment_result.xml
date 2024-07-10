@@ -32,6 +32,15 @@
         android:layout_marginTop="20dp"
         android:orientation="vertical">
 
+        <!-- SearchView -->
+        <android.widget.SearchView
+            android:id="@+id/searchView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:queryHint="Search Player"
+            android:iconifiedByDefault="false"
+            android:background="@color/white"/>
+
         <!-- Include header layout -->
         <include
             android:id="@+id/header"
