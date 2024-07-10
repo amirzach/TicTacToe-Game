@@ -312,24 +312,42 @@ public class DBHelper extends SQLiteOpenHelper {
         cursor.close();
         return playerList;
     }
-    public ArrayList<Float> getWins(){
-        SQLiteDatabase db = null;
-
-        ArrayList<Float> result = new ArrayList<>();
-
-        float wins;
-        db=this.getReadableDatabase();
-        String query = "SELECT wins FROM "+ TABLE_PLAYER;
-        Cursor cursor=db.rawQuery(query,null);
-        int iWins=cursor.getColumnIndex(KEY_PLAYER_WINS);
-        for (cursor.moveToFirst();!cursor.isAfterLast();cursor.moveToNext()){
-            wins =cursor.getFloat(iWins);
-            result.add(wins);
-
+    public int getTotalWins() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT SUM(wins) AS total_wins FROM " + TABLE_PLAYER;
+        Cursor cursor = db.rawQuery(query, null);
+        int totalWins = 0;
+        if (cursor.moveToFirst()) {
+            totalWins = cursor.getInt(cursor.getColumnIndexOrThrow("total_wins"));
         }
         cursor.close();
-        db.close();
-        return result;
+        return totalWins;
     }
+
+    public int getTotalLosses() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT SUM(lose) AS total_lose FROM " + TABLE_PLAYER;
+        Cursor cursor = db.rawQuery(query, null);
+        int totalLosses = 0;
+        if (cursor.moveToFirst()) {
+            totalLosses = cursor.getInt(cursor.getColumnIndexOrThrow("total_lose"));
+        }
+        cursor.close();
+        return totalLosses;
+    }
+
+    public int getTotalDraws() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT SUM(draw) AS total_draw FROM " + TABLE_PLAYER;
+        Cursor cursor = db.rawQuery(query, null);
+        int totalDraws = 0;
+        if (cursor.moveToFirst()) {
+            totalDraws = cursor.getInt(cursor.getColumnIndexOrThrow("total_draw"));
+        }
+        cursor.close();
+        return totalDraws;
+    }
+
+
 
 }
