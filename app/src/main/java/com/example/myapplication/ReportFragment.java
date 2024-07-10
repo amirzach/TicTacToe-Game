@@ -45,6 +45,9 @@ public class ReportFragment extends Fragment {
         ArrayList<Float> rst = new ArrayList<>();
         float points;
 
+        ArrayList<Float> Wins = new ArrayList<>();
+        float wins;
+
         dbHelper = new DBHelper(getActivity());
 
         barChart = view.findViewById(R.id.bar_chart);
@@ -60,34 +63,33 @@ public class ReportFragment extends Fragment {
             BarEntry barEntry=new BarEntry(i+1,points);
             barEntries.add(barEntry);
         }
-
-        //pie chart
-
-        for(i=1;i<10;i++) {
-            float value = (float) (i * 10);
-
-            PieEntry pieEntry=new PieEntry(i,value);
-            pieEntries.add(pieEntry);
-
-
-        }
-        BarDataSet barDataSet = new BarDataSet (barEntries,"Students Mark");
+        BarDataSet barDataSet = new BarDataSet (barEntries,"All Player Points");
         barDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
         barDataSet.setDrawValues(true);
 
         barChart.setData(new BarData(barDataSet));
         //barChart.animateXY (5000, 5000) ;
-        barChart.getDescription().setText("Students Chart");
+        barChart.getDescription().setText("");
         barChart.getDescription().setTextColor(Color.BLUE);
 
         //pie chart
-        PieDataSet pieDataSet = new PieDataSet (pieEntries,"Students");
+        Wins=dbHelper.getWins();
+        for(i=0; i<Wins.size(); i++){
+            wins = (float) Wins.get(i);
+            PieEntry pieEntry=new PieEntry(i+1,wins);
+            pieEntries.add(pieEntry);
+        }
+
+        //pie chart
+        PieDataSet pieDataSet = new PieDataSet (pieEntries,"Wins, Lose , Draw");
         pieDataSet.setColors (ColorTemplate .COLORFUL_COLORS) ;
+
         //pieChart.getDescription () .setEnabled (true);
         pieChart.setData(new PieData(pieDataSet)) ;
         pieChart.animateXY(5000,5000);
-        pieChart.getDescription().setText("Students Chart");
+        pieChart.getDescription().setText("");
         pieChart.getDescription ().setTextColor(Color .RED);
+
 
 
 

@@ -312,4 +312,24 @@ public class DBHelper extends SQLiteOpenHelper {
         cursor.close();
         return playerList;
     }
+    public ArrayList<Float> getWins(){
+        SQLiteDatabase db = null;
+
+        ArrayList<Float> result = new ArrayList<>();
+
+        float wins;
+        db=this.getReadableDatabase();
+        String query = "SELECT wins FROM "+ TABLE_PLAYER;
+        Cursor cursor=db.rawQuery(query,null);
+        int iWins=cursor.getColumnIndex(KEY_PLAYER_WINS);
+        for (cursor.moveToFirst();!cursor.isAfterLast();cursor.moveToNext()){
+            wins =cursor.getFloat(iWins);
+            result.add(wins);
+
+        }
+        cursor.close();
+        db.close();
+        return result;
+    }
+
 }
