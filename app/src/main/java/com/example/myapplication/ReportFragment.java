@@ -74,7 +74,7 @@ public class ReportFragment extends Fragment {
             pieEntries.add(new PieEntry(losePercentage, "Losses"));
             pieEntries.add(new PieEntry(drawPercentage, "Draws"));
 
-            PieDataSet pieDataSet = new PieDataSet(pieEntries, "Host Performance");
+            PieDataSet pieDataSet = new PieDataSet(pieEntries, "");
             pieDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
 
             PieData pieData = new PieData(pieDataSet);
