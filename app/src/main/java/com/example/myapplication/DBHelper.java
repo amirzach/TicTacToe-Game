@@ -17,7 +17,7 @@ import java.util.List;
 public class DBHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "TicTacToeDB";
-    private static final int DATABASE_VERSION = 6;
+    private static final int DATABASE_VERSION = 7;
     private static final String TABLE_HOST = "HOST";
     private static final String TABLE_PLAYER = "PLAYER";
     private static final String KEY_HOST_ID = "id";
