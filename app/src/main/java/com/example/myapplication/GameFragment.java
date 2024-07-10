@@ -304,11 +304,15 @@ public class GameFragment extends Fragment implements View.OnClickListener {
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
             String nickname = editTextNickname.getText().toString().trim();
             if (!nickname.isEmpty()) {
-                insertPlayerTwoName(nickname);
-                playerTwoName = nickname;
-                playerTwoNameTextView.setText(playerTwoName);
-                playerStatus.setText(playerOneName + "'s Turn");
-                dialog.dismiss();
+                if (isNicknameUnique(nickname)) {
+                    insertPlayerTwoName(nickname);
+                    playerTwoName = nickname;
+                    playerTwoNameTextView.setText(playerTwoName);
+                    playerStatus.setText(playerOneName + "'s Turn");
+                    dialog.dismiss();
+                } else {
+                    editTextNickname.setError("This nickname is already taken. Please enter a different nickname for Player-2.");
+                }
             } else {
                 editTextNickname.setError("Please enter a nickname for Player-2");
             }
@@ -319,7 +323,11 @@ public class GameFragment extends Fragment implements View.OnClickListener {
             if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
                 String nickname = editTextNickname.getText().toString().trim();
                 if (!nickname.isEmpty()) {
-                    dialog.dismiss();
+                    if (isNicknameUnique(nickname)) {
+                        dialog.dismiss();
+                    } else {
+                        Toast.makeText(getActivity(), "This nickname is already taken. Please enter a different nickname for Player-2.", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
                     Toast.makeText(getActivity(), "Please enter a nickname for Player-2", Toast.LENGTH_SHORT).show();
                 }
@@ -327,6 +335,18 @@ public class GameFragment extends Fragment implements View.OnClickListener {
             }
             return false;
         });
+    }
+
+    // Method to check if the nickname is unique
+    private boolean isNicknameUnique(String nickname) {
+        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM player WHERE nickname=?", new String[]{nickname});
+        boolean isUnique = true;
+        if (cursor.moveToFirst()) {
+            int count = cursor.getInt(0);
+            isUnique = (count == 0);
+        }
+        cursor.close();
+        return isUnique;
     }
 
 
