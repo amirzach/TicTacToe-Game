@@ -62,9 +62,9 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            db.execSQL("DROP TABLE IF EXISTS " + TABLE_HOST);
-            db.execSQL("DROP TABLE IF EXISTS " + TABLE_PLAYER);
-            onCreate(db);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_HOST);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_PLAYER);
+        onCreate(db);
     }
 
     public boolean createHost(String username, String nickname, String password) {
