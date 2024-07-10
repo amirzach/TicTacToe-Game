@@ -51,9 +51,9 @@ public class DBHelper extends SQLiteOpenHelper {
         String CREATE_TABLE_PLAYER = "CREATE TABLE " + TABLE_PLAYER + "("
                 + KEY_PLAYER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + KEY_PLAYER_NICKNAME + " TEXT UNIQUE,"
-                + KEY_PLAYER_WINS + " INT,"
-                + KEY_PLAYER_LOSE + " INT,"
-                + KEY_PLAYER_DRAW + " INT,"
+                + KEY_PLAYER_WINS + " INT DEFAULT 0,"
+                + KEY_PLAYER_LOSE + " INT DEFAULT 0,"
+                + KEY_PLAYER_DRAW + " INT DEFAULT 0,"
                 + KEY_PLAYER_POINTS + " INT DEFAULT 0)";
 
         db.execSQL(CREATE_TABLE_HOST);
