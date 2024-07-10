@@ -293,11 +293,7 @@ public class GameFragment extends Fragment implements View.OnClickListener {
         EditText editTextNickname = dialogView.findViewById(R.id.editTextNickname);
 
         builder.setTitle("Player-2 Name")
-                .setPositiveButton("OK", null) // Set null for now to override later
-                .setNegativeButton("Cancel", (dialog, which) -> {
-                    // Handle cancel if needed
-                })
-                .setCancelable(false);
+                .setPositiveButton("OK", null);
 
         AlertDialog dialog = builder.create();
         dialog.show();
