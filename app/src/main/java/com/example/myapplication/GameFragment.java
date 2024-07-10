@@ -24,7 +24,7 @@ import androidx.fragment.app.FragmentTransaction;
 public class GameFragment extends Fragment implements View.OnClickListener {
 
     private SQLiteDatabase db;
-    private TextView playerOneScore, playerTwoScore, playerStatus, playerOneNameTextView, playerTwoNameTextView;
+    private TextView playerOneScore, playerTwoScore, playerStatus, playerOneNameTextView, playerTwoNameTextView, numOfRoundsText;
     private Button[] buttons = new Button[16];
     private Button reset, playAgain;
 
@@ -35,7 +35,7 @@ public class GameFragment extends Fragment implements View.OnClickListener {
             {0, 5, 10, 15}, {3, 6, 9, 12} // Diagonals
     };
 
-    private int rounds = 0;
+    private int numOfBoxes = 0, rounds = 1;
     private boolean isPlayerOneTurn = true;
     private boolean playerOneChoosesX = true; // Track player one's choice
     private int playerOneScoreCount = 0;
@@ -79,6 +79,7 @@ public class GameFragment extends Fragment implements View.OnClickListener {
         playAgain = view.findViewById(R.id.btn_play_again);
         playerOneNameTextView = view.findViewById(R.id.text_player1);
         playerTwoNameTextView = view.findViewById(R.id.text_player2);
+        numOfRoundsText = view.findViewById(R.id.numOfRoundText);
 
         // Initialize gameState for 16 buttons
         for (int i = 0; i < 16; i++) {
@@ -107,13 +108,18 @@ public class GameFragment extends Fragment implements View.OnClickListener {
         }
 
         reset.setOnClickListener(v -> {
-            playAgain();
             playerOneScoreCount = 0;
             playerTwoScoreCount = 0;
+            rounds = 1;
             updatePlayerScore();
+            updateRound();
+            playAgain();
         });
 
-        playAgain.setOnClickListener(v -> playAgain());
+        playAgain.setOnClickListener(v -> {
+            updateRound();
+            playAgain();
+        });
 
         if (isLoggedIn) {
             fetchPlayerNames();
@@ -141,7 +147,7 @@ public class GameFragment extends Fragment implements View.OnClickListener {
             gameState[clickedIndex] = playerOneChoosesX ? 1 : 0;
         }
 
-        rounds++;
+        numOfBoxes++;
 
         if (checkWinner()) {
             if (isPlayerOneTurn) {
@@ -169,11 +175,10 @@ public class GameFragment extends Fragment implements View.OnClickListener {
             } else {
                 updatePlayerScore();
             }
-        } else if (rounds == 16) {
-            playerStatus.setText("It's a draw!");
+        } else if (numOfBoxes == 16) {
+            playerStatus.setText("It's a draw! Play Again to start a new round.");
             updatePoints(playerOneName, 1, false, true); // Draw for Player-1
             updatePoints(playerTwoName, 1, false, true); // Draw for Player-2
-            playAgain();
         } else {
             isPlayerOneTurn = !isPlayerOneTurn;
             playerStatus.setText(isPlayerOneTurn ? playerOneName + "'s Turn" : playerTwoName + "'s Turn");
@@ -204,9 +209,6 @@ public class GameFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-
-
-
     private boolean checkWinner() {
         for (int[] winningPosition : winningPositions) {
             if (gameState[winningPosition[0]] == gameState[winningPosition[1]]
@@ -232,14 +234,17 @@ public class GameFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-
     private void updatePlayerScore() {
         playerOneScore.setText(String.valueOf(playerOneScoreCount));
         playerTwoScore.setText(String.valueOf(playerTwoScoreCount));
     }
 
+    private void updateRound() {
+        numOfRoundsText.setText(String.valueOf(rounds));
+    }
+
     private void playAgain() {
-        rounds = 0;
+        numOfBoxes = 0;
         isPlayerOneTurn = true;
         playerStatus.setText(playerOneName + "'s Turn");
 
@@ -248,16 +253,18 @@ public class GameFragment extends Fragment implements View.OnClickListener {
             buttons[i].setText("");
             buttons[i].setTextColor(Color.parseColor("#000000"));
         }
+
+        rounds++;
         enableButtons(); // Enable buttons for the new game
     }
 
     private void resetGame() {
         playerOneScoreCount = 0;
         playerTwoScoreCount = 0;
+        rounds = 0;
         updatePlayerScore();
         playAgain();
     }
-
 
     private void showChooseSymbolDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
