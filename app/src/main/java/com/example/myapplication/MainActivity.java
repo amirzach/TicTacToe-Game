@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         boolean isLoggedIn = sharedPreferences.getBoolean("is_logged_in", false);
 
         // Update the menu based on login status
-        updateMenu(isLoggedIn);
+//        updateMenu(isLoggedIn);
 
         if (savedInstanceState == null) {
             if (isLoggedIn) {
@@ -58,10 +58,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    private void updateMenu(boolean isLoggedIn) {
-        signInMenuItem.setVisible(!isLoggedIn);
-        logoutMenuItem.setVisible(isLoggedIn);
-    }
+//    private void updateMenu(boolean isLoggedIn) {
+//        signInMenuItem.setVisible(!isLoggedIn);
+//        logoutMenuItem.setVisible(isLoggedIn);
+//    }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -88,14 +88,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         } else if (id == R.id.nav_logout) {
             // Logout and clear session
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.clear();
-            editor.apply();
+            if (checkLog(isLoggedIn)) {
+                getSupportFragmentManager().beginTransaction().commit();
+            }
 
-            // Update the menu after logout
-            updateMenu(false);
-
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new LoginFragment()).commit();
         }
 
         drawerLayout.closeDrawer(GravityCompat.START);
@@ -110,6 +106,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             Toast.makeText(this, "Host record does not exist. Please sign in first.", Toast.LENGTH_SHORT).show();
             return false;
         }
+        return true;
+    }
+    private boolean checkLog(boolean isLoggedIn) {
+        if (!isLoggedIn) {
+            Toast.makeText(this, "You are already log out.", Toast.LENGTH_SHORT).show();
+            return false;
+        } else if (!dbHelper.isHostExists()) {
+            Toast.makeText(this, "Host record does not exist.", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        SharedPreferences sharedPreferences = getSharedPreferences("user_session", Context.MODE_PRIVATE);
+        // Update the menu after logout
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.clear();
+        editor.apply();
+
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new LoginFragment()).commit();
         return true;
     }
 
