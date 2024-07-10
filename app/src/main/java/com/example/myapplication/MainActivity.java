@@ -95,6 +95,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new LoginFragment()).commit();
         } else if (id == R.id.nav_Game) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new GameFragment()).commit();
+        } else if (id == R.id.nav_result){
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ResultFragment()).commit();
         } else if (id == R.id.nav_Report) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ReportFragment()).commit();
         } else if (id == R.id.nav_logout) {

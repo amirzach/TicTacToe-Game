@@ -23,6 +23,11 @@
             android:title="Sign in"/>
 
         <item
+            android:id="@+id/nav_result"
+            android:icon="@drawable/nav_result"
+            android:title="Match Result"/>
+
+        <item
             android:id="@+id/nav_Report"
             android:icon="@drawable/nav_piechart"
             android:title="Report"/>

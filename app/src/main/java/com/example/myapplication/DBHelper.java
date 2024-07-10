@@ -116,7 +116,6 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
-
     protected boolean isHostExists() {
         SQLiteDatabase db = null;
         Cursor cursor = null;
