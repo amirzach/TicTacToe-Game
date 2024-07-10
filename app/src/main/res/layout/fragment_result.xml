@@ -28,9 +28,10 @@
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/textViewTitle"
-        android:layout_marginTop="20dp"
-        android:orientation="vertical">
+        android:layout_marginTop="50dp"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="48dp">
 
         <!-- SearchView -->
         <android.widget.SearchView

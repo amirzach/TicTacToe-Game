@@ -8,18 +8,18 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.content.Context;
-import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Toast;
+
 import com.google.android.material.navigation.NavigationView;
-import android.content.SharedPreferences;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private DrawerLayout drawerLayout;
     private MenuItem signInMenuItem, logoutMenuItem;
-    DBHelper DBHelper = new DBHelper(this);
+    private DBHelper dbHelper = new DBHelper(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,26 +33,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open_nav,
-                R.string.close_nav);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open_nav, R.string.close_nav);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        //Get the Sign Up, Sign In and Logout menu item
+        // Get the Sign In and Logout menu items
         signInMenuItem = navigationView.getMenu().findItem(R.id.nav_Signin);
         logoutMenuItem = navigationView.getMenu().findItem(R.id.nav_logout);
 
         SharedPreferences sharedPreferences = getSharedPreferences("user_session", Context.MODE_PRIVATE);
         boolean isLoggedIn = sharedPreferences.getBoolean("is_logged_in", false);
 
-        //Check if user logged in
-//        if (isLoggedIn) {
-//            signInMenuItem.setVisible(false);
-//            logoutMenuItem.setVisible(true);
-//        } else {
-//            signInMenuItem.setVisible(true);
-//            logoutMenuItem.setVisible(false);
-//        }
+        // Update the menu based on login status
+        updateMenu(isLoggedIn);
 
         if (savedInstanceState == null) {
             if (isLoggedIn) {
@@ -63,23 +56,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 navigationView.setCheckedItem(R.id.nav_Signin);
             }
         }
-
-        // Check if host exists in the database
-        if (DBHelper.isHostExists()) {
-            // Host exists
-            if (savedInstanceState == null) {
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
-                navigationView.setCheckedItem(R.id.nav_home);
-            }
-        }
     }
 
-    public void toggleDrawer() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START);
-        } else {
-            drawerLayout.openDrawer(GravityCompat.START);
-        }
+    private void updateMenu(boolean isLoggedIn) {
+        signInMenuItem.setVisible(!isLoggedIn);
+        logoutMenuItem.setVisible(isLoggedIn);
     }
 
     @Override
@@ -94,21 +75,41 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else if (id == R.id.nav_Signin) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new LoginFragment()).commit();
         } else if (id == R.id.nav_Game) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new GameFragment()).commit();
+            if (checkRestrictedAccess(isLoggedIn)) {
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new GameFragment()).commit();
+            }
         } else if (id == R.id.nav_result){
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ResultFragment()).commit();
+            if (checkRestrictedAccess(isLoggedIn)) {
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ResultFragment()).commit();
+            }
         } else if (id == R.id.nav_Report) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ReportFragment()).commit();
+            if (checkRestrictedAccess(isLoggedIn)) {
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ReportFragment()).commit();
+            }
         } else if (id == R.id.nav_logout) {
             // Logout and clear session
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.clear();
             editor.apply();
 
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
+            // Update the menu after logout
+            updateMenu(false);
+
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new LoginFragment()).commit();
         }
 
         drawerLayout.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
+    private boolean checkRestrictedAccess(boolean isLoggedIn) {
+        if (!isLoggedIn) {
+            Toast.makeText(this, "Please log in first.", Toast.LENGTH_SHORT).show();
+            return false;
+        } else if (!dbHelper.isHostExists()) {
+            Toast.makeText(this, "Host record does not exist. Please sign in first.", Toast.LENGTH_SHORT).show();
+            return false;
+        }
         return true;
     }
 
