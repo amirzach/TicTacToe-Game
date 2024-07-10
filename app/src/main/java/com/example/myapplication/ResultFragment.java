@@ -28,7 +28,7 @@ public class ResultFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         DBHelper = new DBHelper(getContext());
-        List<Player> playerList = DBHelper.getAllPlayers();
+        List<Player> playerList = DBHelper.getAllPlayersDesc();
 
         playerAdapter = new PlayerAdapter(playerList);
         recyclerView.setAdapter(playerAdapter);

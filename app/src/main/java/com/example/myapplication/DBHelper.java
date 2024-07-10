@@ -265,10 +265,10 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
-    // Method to get all players
-    public List<Player> getAllPlayers() {
+    // Method to get all players in descending order
+    public List<Player> getAllPlayersDesc() {
         List<Player> playerList = new ArrayList<>();
-        String selectQuery = "SELECT * FROM " + TABLE_PLAYER;
+        String selectQuery = "SELECT * FROM " + TABLE_PLAYER + " ORDER BY " + KEY_PLAYER_POINTS + " DESC";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
