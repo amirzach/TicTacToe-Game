@@ -110,7 +110,7 @@ public class GameFragment extends Fragment implements View.OnClickListener {
         reset.setOnClickListener(v -> {
             playerOneScoreCount = 0;
             playerTwoScoreCount = 0;
-            rounds = 1;
+            rounds = 0;
             updatePlayerScore();
             updateRound();
             playAgain();
@@ -240,6 +240,7 @@ public class GameFragment extends Fragment implements View.OnClickListener {
     }
 
     private void updateRound() {
+        rounds++;
         numOfRoundsText.setText(String.valueOf(rounds));
     }
 
@@ -254,7 +255,6 @@ public class GameFragment extends Fragment implements View.OnClickListener {
             buttons[i].setTextColor(Color.parseColor("#000000"));
         }
 
-        rounds++;
         enableButtons(); // Enable buttons for the new game
     }
 
