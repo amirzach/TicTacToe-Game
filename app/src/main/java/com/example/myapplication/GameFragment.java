@@ -213,11 +213,25 @@ public class GameFragment extends Fragment implements View.OnClickListener {
                     && gameState[winningPosition[1]] == gameState[winningPosition[2]]
                     && gameState[winningPosition[2]] == gameState[winningPosition[3]]
                     && gameState[winningPosition[0]] != 2) {
+                disableButtons(); // Disable buttons when a winner is detected
                 return true;
             }
         }
         return false;
     }
+
+    private void disableButtons() {
+        for (Button button : buttons) {
+            button.setEnabled(false);
+        }
+    }
+
+    private void enableButtons() {
+        for (Button button : buttons) {
+            button.setEnabled(true);
+        }
+    }
+
 
     private void updatePlayerScore() {
         playerOneScore.setText(String.valueOf(playerOneScoreCount));
@@ -234,6 +248,7 @@ public class GameFragment extends Fragment implements View.OnClickListener {
             buttons[i].setText("");
             buttons[i].setTextColor(Color.parseColor("#000000"));
         }
+        enableButtons(); // Enable buttons for the new game
     }
 
     private void resetGame() {
@@ -242,6 +257,7 @@ public class GameFragment extends Fragment implements View.OnClickListener {
         updatePlayerScore();
         playAgain();
     }
+
 
     private void showChooseSymbolDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
