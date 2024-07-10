@@ -269,7 +269,7 @@ public class GameFragment extends Fragment implements View.OnClickListener {
     private void showChooseSymbolDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Choose Symbol")
-                .setMessage(playerOneName + ", choose X or O")
+                .setMessage("Hello Mr/Mrs "+playerOneName + ", please choose O or X ")
                 .setPositiveButton("X", (dialog, which) -> {
                     playerOneChoosesX = true;
                     playerStatus.setText(playerOneName + "'s Turn");
@@ -293,23 +293,29 @@ public class GameFragment extends Fragment implements View.OnClickListener {
         EditText editTextNickname = dialogView.findViewById(R.id.editTextNickname);
 
         builder.setTitle("Player-2 Name")
-                .setPositiveButton("OK", (dialog, which) -> {
-                    String nickname = editTextNickname.getText().toString().trim();
-                    if (!nickname.isEmpty()) {
-                        insertPlayerTwoName(nickname);
-                        playerTwoName = nickname;
-                        playerTwoNameTextView.setText(playerTwoName);
-                        playerStatus.setText(playerOneName + "'s Turn");
-                    } else {
-                        Toast.makeText(getActivity(), "Please enter a nickname for Player-2", Toast.LENGTH_SHORT).show();
-                    }
-                })
+                .setPositiveButton("OK", null) // Set null for now to override later
                 .setNegativeButton("Cancel", (dialog, which) -> {
                     // Handle cancel if needed
                 })
-                .setCancelable(false)
-                .show();
+                .setCancelable(false);
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+            String nickname = editTextNickname.getText().toString().trim();
+            if (!nickname.isEmpty()) {
+                insertPlayerTwoName(nickname);
+                playerTwoName = nickname;
+                playerTwoNameTextView.setText(playerTwoName);
+                playerStatus.setText(playerOneName + "'s Turn");
+                dialog.dismiss();
+            } else {
+                editTextNickname.setError("Please enter a nickname for Player-2");
+            }
+        });
     }
+
 
     private void insertPlayerTwoName(String nickname) {
         ContentValues values = new ContentValues();
