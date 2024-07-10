@@ -28,21 +28,22 @@
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="100dp"
         android:orientation="vertical"
         android:gravity="center"
-        android:padding="48dp">
+        android:padding="18dp">
 
         <!-- SearchView -->
+
+        <!-- Include header layout -->
         <android.widget.SearchView
             android:id="@+id/searchView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:queryHint="Search Player"
+            android:background="@color/white"
             android:iconifiedByDefault="false"
-            android:background="@color/white"/>
+            android:queryHint="Search Player" />
 
-        <!-- Include header layout -->
         <include
             android:id="@+id/header"
             layout="@layout/header_row" />
