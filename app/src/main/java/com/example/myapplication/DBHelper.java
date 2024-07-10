@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -11,6 +12,7 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class DBHelper extends SQLiteOpenHelper {
 
@@ -263,4 +265,27 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
+    // Method to get all players
+    public List<Player> getAllPlayers() {
+        List<Player> playerList = new ArrayList<>();
+        String selectQuery = "SELECT * FROM " + TABLE_PLAYER;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                @SuppressLint("Range") Player player = new Player(
+                        cursor.getInt(cursor.getColumnIndex(KEY_PLAYER_ID)),
+                        cursor.getString(cursor.getColumnIndex(KEY_PLAYER_NICKNAME)),
+                        cursor.getInt(cursor.getColumnIndex(KEY_PLAYER_WINS)),
+                        cursor.getInt(cursor.getColumnIndex(KEY_PLAYER_LOSE)),
+                        cursor.getInt(cursor.getColumnIndex(KEY_PLAYER_DRAW)),
+                        cursor.getInt(cursor.getColumnIndex(KEY_PLAYER_POINTS)));
+                playerList.add(player);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return playerList;
+    }
 }
